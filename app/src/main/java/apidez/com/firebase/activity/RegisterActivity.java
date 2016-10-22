@@ -26,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void onLoginClick() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -33,6 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void onRegisterClick() {
         Intent intent = new Intent(this, TodoActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 }
