@@ -25,4 +25,11 @@
     <string name="update">UPDATE</string>
     <string name="delete">DELETE</string>
     <string name="app_name">DO.IT</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Create new account</string>
+    <string name="confirm_hint">Confirmation</string>
+    <string name="submit">Submit</string>
+    <string name="login_title">Login to your account</string>
 </resources>

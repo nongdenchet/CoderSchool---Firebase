@@ -8,6 +8,7 @@
     <color name="bg_priority_medium">#FFEB3B</color>
     <color name="bg_priority_low">#4CAF50</color>
     <color name="title_text_color">#000000</color>
+    <color name="whiteDark">#a3a2a2</color>
     <color name="subtitle_text_color">#616161</color>
     <color name="todo_item_divider">#D3D3D3</color>
     <color name="update_text_color">#2196f3</color>
