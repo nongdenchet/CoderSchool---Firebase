@@ -7,12 +7,14 @@ import java.util.Date;
  * Created by nongdenchet on 2/2/16.
  */
 public class Todo implements Serializable {
+    private int id;
     private Priority priority;
     private String title;
     private Date dueDate;
     private boolean completed;
 
-    public Todo(String title, Date dueDate, boolean completed, Priority priority) {
+    public Todo(int id, String title, Date dueDate, boolean completed, Priority priority) {
+        this.id = id;
         this.title = title;
         this.dueDate = dueDate;
         this.completed = completed;
@@ -23,28 +25,20 @@ public class Todo implements Serializable {
         completed = !completed;
     }
 
-    public Priority getPriority() {
-        return priority;
+    public int getId() {
+        return id;
     }
 
-    public void setPriority(Priority priority) {
-        this.priority = priority;
+    public Priority getPriority() {
+        return priority;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public Date getDueDate() {
         return dueDate;
-    }
-
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
     }
 
     public boolean isCompleted() {
@@ -55,10 +49,16 @@ public class Todo implements Serializable {
         this.completed = completed;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Todo && ((Todo) obj).getId() == this.id;
+    }
+
     /**
      * Builder class
      */
     public static class Builder {
+        private static int ID = 0;
         private Priority priority;
         private String title;
         private Date dueDate;
@@ -80,7 +80,7 @@ public class Todo implements Serializable {
         }
 
         public Todo build() {
-            return new Todo(title, dueDate, completed, priority);
+            return new Todo(ID++, title, dueDate, completed, priority);
         }
     }
 }

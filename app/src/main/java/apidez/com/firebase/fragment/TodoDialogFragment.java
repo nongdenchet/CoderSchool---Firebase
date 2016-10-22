@@ -24,6 +24,7 @@ import apidez.com.firebase.custom.PriorityPicker;
 import apidez.com.firebase.model.Todo;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by nongdenchet on 2/11/16.
@@ -35,19 +36,16 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     private CallbackSuccess mCallbackSuccess;
 
     @BindView(R.id.discard)
-    TextView mDiscardButton;
-
-    @BindView(R.id.save)
-    TextView mSaveButton;
+    TextView discardButton;
 
     @BindView(R.id.title_edit_text)
-    EditText mTitleEditText;
+    EditText titleEditText;
 
     @BindView(R.id.priority_picker)
-    PriorityPicker mPriorityPicker;
+    PriorityPicker priorityPicker;
 
     @BindView(R.id.due_date_picker)
-    DueDatePicker mDueDatePicker;
+    DueDatePicker dueDatePicker;
 
     public interface CallbackSuccess {
         void onCreateSuccess(Todo todo);
@@ -85,8 +83,8 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mDueDatePicker.setListenerPickDate(this);
-        mDiscardButton.setOnClickListener(v -> dismiss());
+        dueDatePicker.setListenerPickDate(this);
+        discardButton.setOnClickListener(v -> dismiss());
         restoreTodo();
     }
 
@@ -99,9 +97,9 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     }
 
     private void restoreView(Todo todo) {
-        mTitleEditText.setText(todo.getTitle());
-        mPriorityPicker.setPriority(todo.getPriority());
-        mDueDatePicker.setDueDate(todo.getDueDate());
+        titleEditText.setText(todo.getTitle());
+        priorityPicker.setPriority(todo.getPriority());
+        dueDatePicker.setDueDate(todo.getDueDate());
     }
 
     @Override
@@ -147,5 +145,10 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
                 now.get(Calendar.DAY_OF_MONTH)
         );
         datePickerDialog.show(getActivity().getFragmentManager(), "DatePickerDialog");
+    }
+
+    @OnClick(R.id.save)
+    public void onSaveButtonClick() {
+        dismiss();
     }
 }

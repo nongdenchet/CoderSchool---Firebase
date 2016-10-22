@@ -29,8 +29,6 @@ public class TodoViewModel extends BaseObservable {
         return mTodo;
     }
 
-    // Observable properties
-
     public ObservableInt getActionVisibility() {
         return mActionVisibility;
     }
@@ -46,8 +44,6 @@ public class TodoViewModel extends BaseObservable {
     public ObservableInt getDividerVisibility() {
         return mDividerVisibility;
     }
-
-    // Action
 
     public void setTodo(Todo todo) {
         this.mTodo = todo;
@@ -86,8 +82,6 @@ public class TodoViewModel extends BaseObservable {
         return mTodo.isCompleted();
     }
 
-    // Properties
-
     public boolean actionShowing() {
         return mActionVisibility.get() == View.VISIBLE;
     }
@@ -106,5 +100,10 @@ public class TodoViewModel extends BaseObservable {
 
     public Priority getPriority() {
         return mTodo.getPriority();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof TodoViewModel && ((TodoViewModel) obj).getTodo().equals(mTodo);
     }
 }

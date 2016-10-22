@@ -37,7 +37,7 @@
         android:textColor="@color/hint_color"
         android:textSize="@dimen/small_sub_size" />
 
-    <apidez.com.firebase.custom.DueDateView
+    <apidez.com.firebase.custom.DueDatePicker
         android:id="@+id/due_date_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

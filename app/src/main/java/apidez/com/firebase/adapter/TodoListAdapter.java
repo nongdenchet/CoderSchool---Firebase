@@ -22,6 +22,11 @@ import butterknife.ButterKnife;
  */
 public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<TodoViewModel> mTodos;
+    private OnItemClickListener mItemClickListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(TodoViewModel viewModel);
+    }
 
     public TodoListAdapter() {
         mTodos = new ArrayList<>();
@@ -29,6 +34,10 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public TodoListAdapter(List<TodoViewModel> todos) {
         mTodos = todos;
+    }
+
+    public void setItemClickListener(OnItemClickListener itemClickListener) {
+        mItemClickListener = itemClickListener;
     }
 
     @Override
@@ -77,11 +86,9 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             binding.setViewModel(viewModel);
             binding.executePendingBindings();
             todoView.setOnClickListener(view -> {
-                // TODO: implement
+                if (mItemClickListener != null) mItemClickListener.onItemClick(viewModel);
             });
-            popCheckBox.setOnClickListener(view -> {
-                animateCheckChange();
-            });
+            popCheckBox.setOnClickListener(view -> animateCheckChange());
         }
 
         public void animateCheckChange() {

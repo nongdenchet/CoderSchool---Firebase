@@ -73,6 +73,7 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
             viewModels.add(new TodoViewModel(todo));
         }
         mTodoListAdapter = new TodoListAdapter(viewModels);
+        mTodoListAdapter.setItemClickListener(viewModel -> showTodoDialog(viewModel.getTodo()));
         mTodoList.setAdapter(mTodoListAdapter);
     }
 
