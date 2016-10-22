@@ -112,10 +112,12 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
 
     @Override
     public void onCreateSuccess(Todo todo) {
+        mTodoListAdapter.addTodo(todo);
         mTodoList.smoothScrollToPosition(0);
     }
 
     @Override
     public void onUpdateSuccess(Todo todo) {
+        mTodoListAdapter.updateTodo(todo);
     }
 }

@@ -13,6 +13,7 @@ import apidez.com.firebase.model.Priority;
 public class PriorityPicker extends LinearLayout {
     private PriorityView mHighPriorityView, mMediumPriorityView, mLowPriorityView;
     private PriorityView[] mPriorityViews;
+    private Priority mPriority = Priority.HIGH;
     private Listener mListener;
 
     public interface Listener {
@@ -34,7 +35,7 @@ public class PriorityPicker extends LinearLayout {
         initialize();
     }
 
-    public void setmListener(Listener listener) {
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 
@@ -43,6 +44,10 @@ public class PriorityPicker extends LinearLayout {
         initViews();
         initPriorities();
         initActions();
+    }
+
+    public Priority getPriority() {
+        return mPriority;
     }
 
     private void initViews() {
@@ -79,6 +84,7 @@ public class PriorityPicker extends LinearLayout {
         if (mListener != null) {
             mListener.onPriorityChange(priorityView.getPriority());
         }
+        mPriority = priorityView.getPriority();
     }
 
     private void unSelectAllPriorityViews() {

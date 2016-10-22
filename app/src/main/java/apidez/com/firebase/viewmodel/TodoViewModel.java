@@ -14,12 +14,11 @@ import apidez.com.firebase.model.Todo;
  */
 public class TodoViewModel extends BaseObservable {
     private final String NO_DUE_DATE = "No due date";
-
-    private ObservableBoolean mEnableState = new ObservableBoolean(true);
-    private ObservableInt mActionVisibility = new ObservableInt(View.GONE);
-    private ObservableInt mDividerVisibility = new ObservableInt(View.VISIBLE);
-    private ObservableInt mDisableVisibility = new ObservableInt(View.INVISIBLE);
     private Todo mTodo;
+    public ObservableBoolean enableState = new ObservableBoolean(true);
+    public ObservableInt actionVisibility = new ObservableInt(View.GONE);
+    public ObservableInt dividerVisibility = new ObservableInt(View.VISIBLE);
+    public ObservableInt disableVisibility = new ObservableInt(View.INVISIBLE);
 
     public TodoViewModel(Todo todo) {
         this.mTodo = todo;
@@ -29,53 +28,37 @@ public class TodoViewModel extends BaseObservable {
         return mTodo;
     }
 
-    public ObservableInt getActionVisibility() {
-        return mActionVisibility;
-    }
-
-    public ObservableInt getDisableVisibility() {
-        return mDisableVisibility;
-    }
-
-    public ObservableBoolean getEnableState() {
-        return mEnableState;
-    }
-
-    public ObservableInt getDividerVisibility() {
-        return mDividerVisibility;
-    }
-
     public void setTodo(Todo todo) {
         this.mTodo = todo;
     }
 
     public void resetState() {
-        mEnableState.set(true);
-        mActionVisibility.set(View.GONE);
-        mDividerVisibility.set(View.VISIBLE);
-        mDisableVisibility.set(View.INVISIBLE);
+        enableState.set(true);
+        actionVisibility.set(View.GONE);
+        dividerVisibility.set(View.VISIBLE);
+        disableVisibility.set(View.INVISIBLE);
     }
 
     private boolean isDisableLayerVisible() {
-        return mDisableVisibility.get() == View.VISIBLE;
+        return disableVisibility.get() == View.VISIBLE;
     }
 
     private boolean isActionVisible() {
-        return mActionVisibility.get() == View.VISIBLE;
+        return actionVisibility.get() == View.VISIBLE;
     }
 
     private boolean isDividerVisible() {
-        return mDividerVisibility.get() == View.VISIBLE;
+        return dividerVisibility.get() == View.VISIBLE;
     }
 
     public void switchEnableWhenNotChoose() {
-        mDisableVisibility.set(isDisableLayerVisible() ? View.INVISIBLE : View.VISIBLE);
-        mEnableState.set(!mEnableState.get());
+        disableVisibility.set(isDisableLayerVisible() ? View.INVISIBLE : View.VISIBLE);
+        enableState.set(!enableState.get());
     }
 
     public void switchActionVisibility() {
-        mActionVisibility.set(isActionVisible() ? View.GONE : View.VISIBLE);
-        mDividerVisibility.set(isDividerVisible() ? View.INVISIBLE : View.VISIBLE);
+        actionVisibility.set(isActionVisible() ? View.GONE : View.VISIBLE);
+        dividerVisibility.set(isDividerVisible() ? View.INVISIBLE : View.VISIBLE);
     }
 
     public boolean isCompleted() {
@@ -83,7 +66,7 @@ public class TodoViewModel extends BaseObservable {
     }
 
     public boolean actionShowing() {
-        return mActionVisibility.get() == View.VISIBLE;
+        return actionVisibility.get() == View.VISIBLE;
     }
 
     public float getOpacity() {

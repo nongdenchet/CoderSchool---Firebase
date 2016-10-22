@@ -17,10 +17,12 @@ import android.widget.TextView;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import apidez.com.firebase.R;
 import apidez.com.firebase.custom.DueDatePicker;
 import apidez.com.firebase.custom.PriorityPicker;
+import apidez.com.firebase.model.Priority;
 import apidez.com.firebase.model.Todo;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +35,7 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     public static final String TAG = TodoDialogFragment.class.getSimpleName();
     private static final String TODO = "todo";
     private boolean isRestore = false;
+    private Todo mTodo;
     private CallbackSuccess mCallbackSuccess;
 
     @BindView(R.id.discard)
@@ -49,6 +52,7 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
 
     public interface CallbackSuccess {
         void onCreateSuccess(Todo todo);
+
         void onUpdateSuccess(Todo todo);
     }
 
@@ -89,17 +93,17 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     }
 
     private void restoreTodo() {
-        Todo todo = (Todo) getArguments().getSerializable(TODO);
-        if (todo != null) {
+        mTodo = (Todo) getArguments().getSerializable(TODO);
+        if (mTodo != null) {
             isRestore = true;
-            restoreView(todo);
+            restoreView();
         }
     }
 
-    private void restoreView(Todo todo) {
-        titleEditText.setText(todo.getTitle());
-        priorityPicker.setPriority(todo.getPriority());
-        dueDatePicker.setDueDate(todo.getDueDate());
+    private void restoreView() {
+        titleEditText.setText(mTodo.getTitle());
+        priorityPicker.setPriority(mTodo.getPriority());
+        dueDatePicker.setDueDate(mTodo.getDueDate());
     }
 
     @Override
@@ -149,6 +153,22 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
 
     @OnClick(R.id.save)
     public void onSaveButtonClick() {
+        String title = titleEditText.getText().toString();
+        Priority priority = priorityPicker.getPriority();
+        Date date = dueDatePicker.getDate();
+        Todo todo;
+        if (isRestore) {
+            todo = mTodo.newBuilder()
+                    .title(title)
+                    .priority(priority)
+                    .dueDate(date)
+                    .build();
+        } else {
+            todo = new Todo.Builder(title, priority)
+                    .dueDate(date)
+                    .build();
+        }
+        sendCallbackSuccess(todo);
         dismiss();
     }
 }

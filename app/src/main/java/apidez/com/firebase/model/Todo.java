@@ -49,6 +49,10 @@ public class Todo implements Serializable {
         this.completed = completed;
     }
 
+    public Builder newBuilder() {
+        return new Builder(id);
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Todo && ((Todo) obj).getId() == this.id;
@@ -59,6 +63,7 @@ public class Todo implements Serializable {
      */
     public static class Builder {
         private static int ID = 0;
+        private int id;
         private Priority priority;
         private String title;
         private Date dueDate;
@@ -67,6 +72,11 @@ public class Todo implements Serializable {
         public Builder(String title, Priority priority) {
             this.title = title;
             this.priority = priority;
+            this.id = ++ID;
+        }
+
+        private Builder(int id) {
+            this.id = id;
         }
 
         public Builder dueDate(Date dueDate) {
@@ -79,8 +89,18 @@ public class Todo implements Serializable {
             return this;
         }
 
+        public Builder priority(Priority priority) {
+            this.priority = priority;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
         public Todo build() {
-            return new Todo(ID++, title, dueDate, completed, priority);
+            return new Todo(id, title, dueDate, completed, priority);
         }
     }
 }

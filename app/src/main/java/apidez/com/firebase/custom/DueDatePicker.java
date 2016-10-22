@@ -17,6 +17,7 @@ public class DueDatePicker extends RelativeLayout {
     private DueDateView mTodayView, mTomorrowView, mDayPicker, mNoDateView;
     private DueDateView[] mDueDateViews;
     private ListenerPickDate mListenerPickDate;
+    private Date mDate = new Date();
     private Listener mListener;
 
     public interface Listener {
@@ -35,7 +36,11 @@ public class DueDatePicker extends RelativeLayout {
         this.mListenerPickDate = listenerPickDate;
     }
 
-    public void setmListener(Listener listener) {
+    public Date getDate() {
+        return mDate;
+    }
+
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 
@@ -125,6 +130,7 @@ public class DueDatePicker extends RelativeLayout {
         if (mListener != null) {
             mListener.onDueDateChange(dueDateView.getDate());
         }
+        mDate = dueDateView.getDate();
     }
 
     private void handlePickDate() {

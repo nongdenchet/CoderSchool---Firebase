@@ -12,6 +12,7 @@ import java.util.List;
 import apidez.com.firebase.R;
 import apidez.com.firebase.custom.PopCheckBox;
 import apidez.com.firebase.databinding.ItemTodoBinding;
+import apidez.com.firebase.model.Todo;
 import apidez.com.firebase.utils.view.AnimationUtils;
 import apidez.com.firebase.viewmodel.TodoViewModel;
 import butterknife.BindView;
@@ -40,6 +41,58 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mItemClickListener = itemClickListener;
     }
 
+    public void addTodo(Todo todo) {
+        mTodos.add(0, new TodoViewModel(todo));
+        notifyItemInserted(0);
+    }
+
+    public void updateTodo(Todo todo) {
+        TodoViewModel viewModel = findTodo(todo.getId());
+        if (viewModel != null) {
+            viewModel.setTodo(todo);
+            int position = mTodos.indexOf(viewModel);
+            mTodos.set(position, viewModel);
+            notifyItemChanged(position);
+        }
+    }
+
+    private void removeTodo(TodoViewModel viewModel) {
+        int position = mTodos.indexOf(viewModel);
+        mTodos.remove(viewModel);
+        resetState();
+        notifyItemRemoved(position);
+    }
+
+    private void resetState() {
+        for (TodoViewModel todoViewModel : mTodos) {
+            todoViewModel.resetState();
+        }
+    }
+
+    private TodoViewModel findTodo(int id) {
+        for (TodoViewModel viewModel : mTodos) {
+            if (viewModel.getTodo().getId() == id) {
+                return viewModel;
+            }
+        }
+        return null;
+    }
+
+    private void editTodo(TodoViewModel viewModel) {
+        if (mItemClickListener != null) {
+            mItemClickListener.onItemClick(viewModel);
+        }
+    }
+
+    private void clickTodo(TodoViewModel viewModel) {
+        viewModel.switchActionVisibility();
+        for (TodoViewModel todoViewModel : mTodos) {
+            if (todoViewModel != viewModel) {
+                todoViewModel.switchEnableWhenNotChoose();
+            }
+        }
+    }
+
     @Override
     public int getItemCount() {
         return mTodos.size();
@@ -61,7 +114,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final int ALPHA_ANIM_DURATION = 150;
         private ItemTodoBinding binding;
-        public TodoViewModel viewModel;
 
         @BindView(R.id.pop_checkbox)
         public PopCheckBox popCheckBox;
@@ -75,23 +127,26 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @BindView(R.id.delete_button)
         public View deleteButton;
 
+        @BindView(R.id.disable_layer)
+        public View disableLayer;
+
         public ViewHolder(ItemTodoBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            ButterKnife.bind(this, binding.getRoot());
         }
 
         public void bind(TodoViewModel viewModel) {
-            this.viewModel = viewModel;
-            ButterKnife.bind(this, binding.getRoot());
             binding.setViewModel(viewModel);
             binding.executePendingBindings();
-            todoView.setOnClickListener(view -> {
-                if (mItemClickListener != null) mItemClickListener.onItemClick(viewModel);
-            });
-            popCheckBox.setOnClickListener(view -> animateCheckChange());
+            todoView.setOnClickListener(view -> clickTodo(viewModel));
+            editButton.setOnClickListener(view -> editTodo(viewModel));
+            deleteButton.setOnClickListener(view -> removeTodo(viewModel));
+            popCheckBox.setOnClickListener(view -> animateCheckChange(viewModel));
+            disableLayer.setOnClickListener(view -> resetState());
         }
 
-        public void animateCheckChange() {
+        public void animateCheckChange(TodoViewModel viewModel) {
             boolean test = !viewModel.isCompleted();
             viewModel.getTodo().setCompleted(test);
             popCheckBox.animateChecked(test);
