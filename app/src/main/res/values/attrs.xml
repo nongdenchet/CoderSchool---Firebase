@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PriorityView">
+        <attr name="priorityTitle" format="string"/>
+        <attr name="priorityColor" format="reference"/>
+        <attr name="priorityTitleColor" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="DueDateView">
+        <attr name="select" format="boolean"/>
+        <attr name="dayTitle" format="string"/>
+        <attr name="daySubtitle" format="string"/>
+    </declare-styleable>
+</resources>
