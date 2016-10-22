@@ -16,9 +16,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import apidez.com.firebase.R;
 import apidez.com.firebase.adapter.TodoListAdapter;
 import apidez.com.firebase.model.Todo;
+import apidez.com.firebase.utils.DataUtils;
+import apidez.com.firebase.viewmodel.TodoViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -63,7 +68,11 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
         super.onViewCreated(view, savedInstanceState);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         mTodoList.setLayoutManager(new LinearLayoutManager(getContext()));
-        mTodoListAdapter = new TodoListAdapter();
+        List<TodoViewModel> viewModels = new ArrayList<>();
+        for (Todo todo : DataUtils.provideMockTodoList()) {
+            viewModels.add(new TodoViewModel(todo));
+        }
+        mTodoListAdapter = new TodoListAdapter(viewModels);
         mTodoList.setAdapter(mTodoListAdapter);
     }
 

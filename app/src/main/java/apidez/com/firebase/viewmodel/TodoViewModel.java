@@ -19,7 +19,6 @@ public class TodoViewModel extends BaseObservable {
     private ObservableInt mActionVisibility = new ObservableInt(View.GONE);
     private ObservableInt mDividerVisibility = new ObservableInt(View.VISIBLE);
     private ObservableInt mDisableVisibility = new ObservableInt(View.INVISIBLE);
-
     private Todo mTodo;
 
     public TodoViewModel(Todo todo) {
