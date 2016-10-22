@@ -20,14 +20,14 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.btnRegister)
     public void onRegisterClick() {
         Intent intent = new Intent(this, RegisterActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
     @OnClick(R.id.btnLogin)
     public void onLoginClick() {
         Intent intent = new Intent(this, TodoActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 }
