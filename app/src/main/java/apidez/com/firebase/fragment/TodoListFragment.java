@@ -111,6 +111,8 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
             }
         });
         mTodoList.setAdapter(mTodoListAdapter);
+        mProgressDialog.show();
+        mProgressDialog.setCancelable(false);
     }
 
     private void removeTodo(TodoViewModel viewModel) {
@@ -140,8 +142,6 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mProgressDialog.show();
-        mProgressDialog.setCancelable(false);
         Query query = mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
                 .orderByChild("uid")
                 .startAt(mFirebaseUser.getUid())
@@ -164,8 +164,9 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
             Todo todo = child.getValue(Todo.class);
             todo.setId(child.getKey());
             todos.add(todo);
-            mTodoListAdapter.setTodos(todos);
         }
+        Collections.reverse(todos);
+        mTodoListAdapter.setTodos(todos);
         mProgressDialog.hide();
     }
 

@@ -44,8 +44,8 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void addTodo(Todo todo) {
-        mTodos.add(new TodoViewModel(todo));
-        notifyItemInserted(mTodos.size() - 1);
+        mTodos.add(0, new TodoViewModel(todo));
+        notifyItemInserted(0);
     }
 
     public void updateTodo(Todo todo) {
