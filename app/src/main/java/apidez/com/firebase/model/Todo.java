@@ -1,7 +1,5 @@
 package apidez.com.firebase.model;
 
-import com.google.firebase.database.Exclude;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,7 +24,6 @@ public class Todo implements Serializable {
         this.uid = uid;
     }
 
-    @Exclude
     public String getId() {
         return id;
     }

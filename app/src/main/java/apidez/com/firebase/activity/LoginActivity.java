@@ -9,17 +9,12 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import apidez.com.firebase.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
     private ProgressDialog mProgressDialog;
 
     @BindView(R.id.edtEmail)
@@ -43,11 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setUpFirebase() {
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        if (mFirebaseUser != null) {
-            handleLoginSuccess();
-        }
+        // TODO: implement this
     }
 
     @OnClick(R.id.btnRegister)
@@ -66,10 +57,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         mProgressDialog.show();
-        mFirebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(this, authResult -> handleLoginSuccess())
-                .addOnFailureListener(this, e -> showError(e.getMessage()))
-                .addOnCompleteListener(this, task -> mProgressDialog.hide());
+        // TODO: implement login
     }
 
     private void showError(String error) {

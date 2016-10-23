@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
 
@@ -27,11 +26,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    packagingOptions {
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE-FIREBASE.txt'
-        exclude 'META-INF/NOTICE'
-    }
 }
 
 dependencies {
@@ -49,12 +43,4 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     testCompile 'junit:junit:4.12'
-
-    // Firebase
-    compile 'com.google.firebase:firebase-core:9.6.1'
-    compile 'com.google.firebase:firebase-database:9.6.1'
-    compile 'com.google.firebase:firebase-config:9.6.1'
-    compile 'com.google.firebase:firebase-auth:9.6.1'
-    compile 'com.google.firebase:firebase-messaging:9.6.1'
-    compile 'com.google.firebase:firebase-crash:9.6.1'
 }

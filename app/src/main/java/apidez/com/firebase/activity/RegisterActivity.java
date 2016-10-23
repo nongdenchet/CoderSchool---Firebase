@@ -1,15 +1,12 @@
 package apidez.com.firebase.activity;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import apidez.com.firebase.R;
 import apidez.com.firebase.utils.StringUtils;
@@ -22,7 +19,6 @@ import butterknife.OnClick;
  */
 
 public class RegisterActivity extends AppCompatActivity {
-    private FirebaseAuth mFirebaseAuth;
     private ProgressDialog mProgressDialog;
 
     @BindView(R.id.edtEmail)
@@ -49,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setUpFirebase() {
-        mFirebaseAuth = FirebaseAuth.getInstance();
+        // TODO: implement this
     }
 
     @OnClick(R.id.btnLogin)
@@ -75,10 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registerWithFirebase(String email, String password) {
         mProgressDialog.show();
-        mFirebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(this, authResult -> handleRegisterSuccess())
-                .addOnFailureListener(this, e -> showError(e.getMessage()))
-                .addOnCompleteListener(this, task -> mProgressDialog.hide());
+        // TODO: implement this
     }
 
     private void showError(String error) {

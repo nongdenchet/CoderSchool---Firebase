@@ -14,22 +14,11 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import apidez.com.firebase.R;
-import apidez.com.firebase.activity.LoginActivity;
-import apidez.com.firebase.config.FirebaseConfig;
 import apidez.com.firebase.custom.DueDatePicker;
 import apidez.com.firebase.custom.PriorityPicker;
 import apidez.com.firebase.model.Todo;
@@ -46,9 +35,6 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     private boolean isRestore = false;
     private Todo mTodo;
     private CallbackSuccess mCallbackSuccess;
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-    private DatabaseReference mDatabaseReference;
 
     @BindView(R.id.discard)
     TextView discardButton;
@@ -64,7 +50,6 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
 
     public interface CallbackSuccess {
         void onCreateSuccess(Todo todo);
-
         void onUpdateSuccess(Todo todo);
     }
 
@@ -85,17 +70,6 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
         TodoDialogFragment fragment = new TodoDialogFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        if (mFirebaseUser == null) {
-            startActivity(LoginActivity.getIntent(getActivity()));
-        }
     }
 
     @Nullable
@@ -127,11 +101,6 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
         titleEditText.setText(mTodo.getTitle());
         priorityPicker.setPriority(mTodo.getPriority());
         dueDatePicker.setDueDate(mTodo.getDueDate());
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -176,48 +145,15 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     }
 
     private Todo gatherData() {
-        return new Todo(
-                priorityPicker.getPriority(),
-                titleEditText.getText().toString().trim(),
-                dueDatePicker.getDate(),
-                mFirebaseUser.getUid()
-        );
+        // TODO: implement this
+        return null;
     }
 
     private void create() {
-        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
-                .push()
-                .setValue(gatherData(), (databaseError, databaseReference) -> {
-                    if (databaseError == null) {
-                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Todo todo = dataSnapshot.getValue(Todo.class);
-                                todo.setId(dataSnapshot.getKey());
-                                mCallbackSuccess.onCreateSuccess(todo);
-                                dismiss();
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
-                    }
-                });
+        // TODO: implement this
     }
 
     private void update() {
-        Map<String, Object> updates = new HashMap<>();
-        Todo newTodo = gatherData();
-        newTodo.setId(mTodo.getId());
-        newTodo.setCompleted(mTodo.isCompleted());
-        updates.put(mTodo.getId(), newTodo);
-        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
-                .updateChildren(updates, (databaseError, databaseReference) -> {
-                    if (databaseError == null) {
-                        mCallbackSuccess.onUpdateSuccess(newTodo);
-                        dismiss();
-                    }
-                });
+        // TODO: implement this
     }
 }
