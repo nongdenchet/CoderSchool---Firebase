@@ -131,7 +131,6 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
         Map<String, Object> updates = new HashMap<>();
         updates.put(todo.getId(), todo);
         mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
-                .child(viewModel.getTodo().getId())
                 .updateChildren(updates, (databaseError, databaseReference) -> {
                     if (databaseError == null) {
                         mTodoListAdapter.updateTodo(todo);
