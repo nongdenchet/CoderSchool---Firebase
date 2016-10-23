@@ -1,6 +1,5 @@
 package apidez.com.firebase.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +27,8 @@ import java.util.List;
 import apidez.com.firebase.R;
 import apidez.com.firebase.activity.LoginActivity;
 import apidez.com.firebase.adapter.TodoListAdapter;
+import apidez.com.firebase.config.FirebaseConfig;
 import apidez.com.firebase.model.Todo;
-import apidez.com.firebase.utils.DataUtils;
-import apidez.com.firebase.viewmodel.TodoViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -36,9 +39,13 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
     private TodoListAdapter mTodoListAdapter;
     private TodoDialogFragment mTodoDialogFragment;
     private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabaseReference;
 
     @BindView(R.id.todoList)
     RecyclerView mTodoList;
+
+    @BindView(R.id.emptyContainer)
+    View emptyContainer;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -71,13 +78,36 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
         super.onViewCreated(view, savedInstanceState);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         mTodoList.setLayoutManager(new LinearLayoutManager(getContext()));
-        List<TodoViewModel> viewModels = new ArrayList<>();
-        for (Todo todo : DataUtils.provideMockTodoList()) {
-            viewModels.add(new TodoViewModel(todo));
-        }
-        mTodoListAdapter = new TodoListAdapter(viewModels);
+        mTodoListAdapter = new TodoListAdapter();
+        mTodoListAdapter.setOnSizeChangeLitener(size ->
+                emptyContainer.setVisibility(size > 0 ? View.GONE : View.VISIBLE));
         mTodoListAdapter.setItemClickListener(viewModel -> showTodoDialog(viewModel.getTodo()));
         mTodoList.setAdapter(mTodoListAdapter);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        handleResponse(dataSnapshot);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private void handleResponse(DataSnapshot dataSnapshot) {
+        List<Todo> todos = new ArrayList<>();
+        for (DataSnapshot child : dataSnapshot.getChildren()) {
+            todos.add(child.getValue(Todo.class));
+            mTodoListAdapter.setTodos(todos);
+        }
     }
 
     @Override
@@ -101,9 +131,7 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
 
     private void handleLogout() {
         mFirebaseAuth.signOut();
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        startActivity(LoginActivity.getIntent(getActivity()));
     }
 
     private void showTodoDialog() {

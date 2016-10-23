@@ -1,5 +1,7 @@
 package apidez.com.firebase.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -20,6 +22,12 @@ public class TodoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_todo);
         drawStatusBar();
         addFragmentTodoList();
+    }
+
+    public static Intent getIntent(Context context) {
+        Intent intent = new Intent(context, TodoActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return intent;
     }
 
     private void addFragmentTodoList() {

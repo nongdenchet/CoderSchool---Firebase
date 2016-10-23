@@ -24,25 +24,40 @@ import butterknife.ButterKnife;
 public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<TodoViewModel> mTodos;
     private OnItemClickListener mItemClickListener;
+    private OnSizeChangeListener mOnSizeChangeLitener;
 
     public interface OnItemClickListener {
         void onItemClick(TodoViewModel viewModel);
+    }
+
+    public interface OnSizeChangeListener {
+        void onSizeChange(int size);
     }
 
     public TodoListAdapter() {
         mTodos = new ArrayList<>();
     }
 
-    public TodoListAdapter(List<TodoViewModel> todos) {
-        mTodos = todos;
-    }
-
     public void setItemClickListener(OnItemClickListener itemClickListener) {
         mItemClickListener = itemClickListener;
     }
 
+    public void setOnSizeChangeLitener(OnSizeChangeListener onSizeChangeLitener) {
+        mOnSizeChangeLitener = onSizeChangeLitener;
+    }
+
+    public void setTodos(List<Todo> todos) {
+        mTodos.clear();
+        for (Todo todo : todos) {
+            mTodos.add(new TodoViewModel(todo));
+        }
+        triggerSizeChange();
+        notifyDataSetChanged();
+    }
+
     public void addTodo(Todo todo) {
         mTodos.add(0, new TodoViewModel(todo));
+        triggerSizeChange();
         notifyItemInserted(0);
     }
 
@@ -60,12 +75,19 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         int position = mTodos.indexOf(viewModel);
         mTodos.remove(viewModel);
         resetState();
+        triggerSizeChange();
         notifyItemRemoved(position);
     }
 
     private void resetState() {
         for (TodoViewModel todoViewModel : mTodos) {
             todoViewModel.resetState();
+        }
+    }
+
+    private void triggerSizeChange() {
+        if (mOnSizeChangeLitener != null) {
+            mOnSizeChangeLitener.onSizeChange(mTodos.size());
         }
     }
 

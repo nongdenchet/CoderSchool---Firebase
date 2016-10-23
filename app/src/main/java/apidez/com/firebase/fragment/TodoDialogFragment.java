@@ -13,16 +13,21 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import apidez.com.firebase.R;
+import apidez.com.firebase.activity.LoginActivity;
+import apidez.com.firebase.config.FirebaseConfig;
 import apidez.com.firebase.custom.DueDatePicker;
 import apidez.com.firebase.custom.PriorityPicker;
-import apidez.com.firebase.model.Priority;
 import apidez.com.firebase.model.Todo;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +42,11 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     private boolean isRestore = false;
     private Todo mTodo;
     private CallbackSuccess mCallbackSuccess;
+
+    // Firebase
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private DatabaseReference mDatabaseReference;
 
     @BindView(R.id.discard)
     TextView discardButton;
@@ -73,6 +83,17 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
         TodoDialogFragment fragment = new TodoDialogFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        if (mFirebaseUser == null) {
+            startActivity(LoginActivity.getIntent(getActivity()));
+        }
     }
 
     @Nullable
@@ -153,21 +174,50 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
 
     @OnClick(R.id.save)
     public void onSaveButtonClick() {
-        String title = titleEditText.getText().toString();
-        Priority priority = priorityPicker.getPriority();
-        Date date = dueDatePicker.getDate();
-        Todo todo;
         if (isRestore) {
-            todo = mTodo.newBuilder()
-                    .title(title)
-                    .priority(priority)
-                    .dueDate(date)
-                    .build();
+            update();
         } else {
-            todo = new Todo.Builder(title, priority)
-                    .dueDate(date)
-                    .build();
+            create();
         }
+    }
+
+    private void create() {
+        String title = titleEditText.getText().toString().trim();
+        Todo todo = new Todo.Builder(title, priorityPicker.getPriority())
+                .dueDate(dueDatePicker.getDate())
+                .build();
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .push()
+                .setValue(todo, (databaseError, databaseReference) -> {
+                    if (databaseError != null) {
+                        showMessage(databaseError.getMessage());
+                    } else {
+                        handleSuccess(todo);
+                    }
+                });
+    }
+
+    private void update() {
+        Todo todo = mTodo.newBuilder()
+                .title(titleEditText.getText().toString().trim())
+                .priority(priorityPicker.getPriority())
+                .dueDate(dueDatePicker.getDate())
+                .build();
+//        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+//                .setValue(todo, (databaseError, databaseReference) -> {
+//                    if (databaseError != null) {
+//                        showMessage(databaseError.getMessage());
+//                    } else {
+//                        handleSuccess(todo);
+//                    }
+//                });
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void handleSuccess(Todo todo) {
         sendCallbackSuccess(todo);
         dismiss();
     }

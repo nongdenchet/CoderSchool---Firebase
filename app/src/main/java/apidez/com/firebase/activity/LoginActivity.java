@@ -1,6 +1,7 @@
 package apidez.com.firebase.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -76,8 +77,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleLoginSuccess() {
-        Intent intent = new Intent(this, TodoActivity.class);
+        startActivity(TodoActivity.getIntent(this));
+    }
+
+    public static Intent getIntent(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        return intent;
     }
 }

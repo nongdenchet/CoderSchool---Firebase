@@ -54,9 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnLogin)
     public void onLoginClick() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        startActivity(LoginActivity.getIntent(this));
     }
 
     @OnClick(R.id.btnRegister)
@@ -88,8 +86,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void handleRegisterSuccess() {
-        Intent intent = new Intent(this, TodoActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        startActivity(TodoActivity.getIntent(this));
     }
 }

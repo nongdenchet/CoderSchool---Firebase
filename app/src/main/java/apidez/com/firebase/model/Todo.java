@@ -11,6 +11,7 @@ public class Todo implements Serializable {
     private Priority priority;
     private String title;
     private Date dueDate;
+    private String uid;
     private boolean completed;
 
     public Todo(int id, String title, Date dueDate, boolean completed, Priority priority) {
@@ -19,10 +20,6 @@ public class Todo implements Serializable {
         this.dueDate = dueDate;
         this.completed = completed;
         this.priority = priority;
-    }
-
-    public void switchComplete() {
-        completed = !completed;
     }
 
     public int getId() {
@@ -47,6 +44,14 @@ public class Todo implements Serializable {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public Builder newBuilder() {
