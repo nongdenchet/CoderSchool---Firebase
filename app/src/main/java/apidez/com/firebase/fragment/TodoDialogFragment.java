@@ -206,13 +206,15 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
 
     private void update() {
         Map<String, Object> updates = new HashMap<>();
-        mTodo = gatherData();
-        updates.put(mTodo.getId(), mTodo);
+        String id = mTodo.getId();
+        updates.put(id, gatherData());
         mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
                 .updateChildren(updates, (databaseError, databaseReference) -> {
                     if (databaseError != null) {
                         showMessage(databaseError.getMessage());
                     } else {
+                        mTodo = gatherData();
+                        mTodo.setId(id);
                         mCallbackSuccess.onUpdateSuccess(mTodo);
                         dismiss();
                     }
