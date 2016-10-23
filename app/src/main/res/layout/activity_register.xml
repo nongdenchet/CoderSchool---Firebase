@@ -44,7 +44,7 @@
             android:theme="@style/CustomEditText">
 
             <EditText
-                android:id="@+id/username"
+                android:id="@+id/edtEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/email_hint"
@@ -65,7 +65,7 @@
             app:passwordToggleEnabled="false">
 
             <EditText
-                android:id="@+id/password"
+                android:id="@+id/edtPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/password_hint"
@@ -86,7 +86,7 @@
             app:passwordToggleEnabled="false">
 
             <EditText
-                android:id="@+id/confirmation"
+                android:id="@+id/edtConfirmation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/confirm_hint"

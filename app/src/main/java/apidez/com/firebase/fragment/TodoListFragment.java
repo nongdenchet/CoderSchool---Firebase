@@ -1,8 +1,7 @@
 package apidez.com.firebase.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import apidez.com.firebase.R;
+import apidez.com.firebase.activity.LoginActivity;
 import apidez.com.firebase.adapter.TodoListAdapter;
 import apidez.com.firebase.model.Todo;
 import apidez.com.firebase.utils.DataUtils;
@@ -33,7 +35,7 @@ import butterknife.ButterKnife;
 public class TodoListFragment extends Fragment implements TodoDialogFragment.CallbackSuccess {
     private TodoListAdapter mTodoListAdapter;
     private TodoDialogFragment mTodoDialogFragment;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private FirebaseAuth mFirebaseAuth;
 
     @BindView(R.id.todoList)
     RecyclerView mTodoList;
@@ -52,6 +54,7 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
     @Nullable
@@ -88,9 +91,19 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
             case R.id.action_add:
                 showTodoDialog();
                 return true;
+            case R.id.action_logout:
+                handleLogout();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void handleLogout() {
+        mFirebaseAuth.signOut();
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void showTodoDialog() {
