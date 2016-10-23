@@ -51,10 +51,6 @@ public class TodoViewModel extends BaseObservable {
         return mTodo.isCompleted();
     }
 
-    public boolean actionShowing() {
-        return actionVisibility.get() == View.VISIBLE;
-    }
-
     public float getOpacity() {
         return mTodo.isCompleted() ? 0.5f : 1.0f;
     }
