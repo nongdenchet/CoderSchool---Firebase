@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -21,29 +22,4 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
         android:background="@android:color/white" />
-
-    <LinearLayout
-        android:id="@+id/emptyContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="visible">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/alert_title"
-            android:textColor="@color/empty_title_color"
-            android:textSize="@dimen/extra_title_size" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/alert_subtitle"
-            android:textColor="@color/empty_subtitle_color"
-            android:textSize="@dimen/title_size" />
-    </LinearLayout>
 </RelativeLayout>

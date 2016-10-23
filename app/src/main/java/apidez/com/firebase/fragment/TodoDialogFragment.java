@@ -17,11 +17,16 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import apidez.com.firebase.R;
 import apidez.com.firebase.activity.LoginActivity;
@@ -42,8 +47,6 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     private boolean isRestore = false;
     private Todo mTodo;
     private CallbackSuccess mCallbackSuccess;
-
-    // Firebase
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseReference;
@@ -132,14 +135,6 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
         super.onActivityCreated(savedInstanceState);
     }
 
-    private void sendCallbackSuccess(Todo todo) {
-        if (isRestore) {
-            mCallbackSuccess.onUpdateSuccess(todo);
-        } else {
-            mCallbackSuccess.onCreateSuccess(todo);
-        }
-    }
-
     @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
@@ -181,44 +176,49 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
         }
     }
 
+    private Todo gatherData() {
+        return new Todo(
+                priorityPicker.getPriority(),
+                titleEditText.getText().toString().trim(),
+                dueDatePicker.getDate(),
+                mFirebaseUser.getUid()
+        );
+    }
+
     private void create() {
-        String title = titleEditText.getText().toString().trim();
-        Todo todo = new Todo.Builder(title, priorityPicker.getPriority())
-                .dueDate(dueDatePicker.getDate())
-                .build();
         mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
                 .push()
-                .setValue(todo, (databaseError, databaseReference) -> {
+                .setValue(gatherData(), (databaseError, databaseReference) ->
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Todo todo = dataSnapshot.getValue(Todo.class);
+                                todo.setId(dataSnapshot.getKey());
+                                mCallbackSuccess.onCreateSuccess(todo);
+                                dismiss();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        }));
+    }
+
+    private void update() {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put(mTodo.getId(), gatherData());
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .updateChildren(updates, (databaseError, databaseReference) -> {
                     if (databaseError != null) {
                         showMessage(databaseError.getMessage());
                     } else {
-                        handleSuccess(todo);
+                        mCallbackSuccess.onUpdateSuccess(mTodo);
+                        dismiss();
                     }
                 });
     }
 
-    private void update() {
-        Todo todo = mTodo.newBuilder()
-                .title(titleEditText.getText().toString().trim())
-                .priority(priorityPicker.getPriority())
-                .dueDate(dueDatePicker.getDate())
-                .build();
-//        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
-//                .setValue(todo, (databaseError, databaseReference) -> {
-//                    if (databaseError != null) {
-//                        showMessage(databaseError.getMessage());
-//                    } else {
-//                        handleSuccess(todo);
-//                    }
-//                });
-    }
-
     private void showMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void handleSuccess(Todo todo) {
-        sendCallbackSuccess(todo);
-        dismiss();
     }
 }

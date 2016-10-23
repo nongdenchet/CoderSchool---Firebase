@@ -13,13 +13,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
         android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="@drawable/shadow_reverse"
-            android:visibility="@{viewModel.actionVisibility}" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -30,10 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="78sp"
                 android:alpha="@{viewModel.opacity}"
-                android:background="?attr/selectableItemBackground"
                 android:paddingLeft="@dimen/large_space"
-                android:paddingRight="@dimen/large_space"
-                app:enabled="@{viewModel.enableState}">
+                android:paddingRight="@dimen/large_space">
 
                 <apidez.com.firebase.custom.PriorityView
                     android:id="@+id/priority"
@@ -86,20 +79,7 @@
                 android:layout_centerVertical="true"
                 android:padding="@dimen/large_space"
                 app:check="@{viewModel.isCompleted}" />
-
-            <View
-                android:id="@+id/disable_layer"
-                android:layout_width="match_parent"
-                android:layout_height="78sp"
-                android:background="@color/disable_color"
-                android:visibility="@{viewModel.disableVisibility}" />
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/todo_item_divider"
-            android:visibility="@{viewModel.actionVisibility}" />
 
         <LinearLayout
             android:id="@+id/actions"
@@ -171,8 +151,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:background="@drawable/shadow"
+            android:layout_height="0.5dp"
+            android:background="@color/todo_item_divider"
             android:visibility="@{viewModel.actionVisibility}" />
     </LinearLayout>
 </layout>

@@ -23,27 +23,17 @@ import butterknife.ButterKnife;
  */
 public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<TodoViewModel> mTodos;
-    private OnItemClickListener mItemClickListener;
-    private OnSizeChangeListener mOnSizeChangeLitener;
+    private Listener mListener;
 
-    public interface OnItemClickListener {
+    public interface Listener {
         void onItemClick(TodoViewModel viewModel);
+        void onItemComplete(TodoViewModel viewModel);
+        void onItemRemove(TodoViewModel viewModel);
     }
 
-    public interface OnSizeChangeListener {
-        void onSizeChange(int size);
-    }
-
-    public TodoListAdapter() {
+    public TodoListAdapter(Listener listener) {
         mTodos = new ArrayList<>();
-    }
-
-    public void setItemClickListener(OnItemClickListener itemClickListener) {
-        mItemClickListener = itemClickListener;
-    }
-
-    public void setOnSizeChangeLitener(OnSizeChangeListener onSizeChangeLitener) {
-        mOnSizeChangeLitener = onSizeChangeLitener;
+        mListener = listener;
     }
 
     public void setTodos(List<Todo> todos) {
@@ -51,13 +41,11 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         for (Todo todo : todos) {
             mTodos.add(new TodoViewModel(todo));
         }
-        triggerSizeChange();
         notifyDataSetChanged();
     }
 
     public void addTodo(Todo todo) {
         mTodos.add(0, new TodoViewModel(todo));
-        triggerSizeChange();
         notifyItemInserted(0);
     }
 
@@ -71,29 +59,15 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private void removeTodo(TodoViewModel viewModel) {
+    public void removeTodo(TodoViewModel viewModel) {
         int position = mTodos.indexOf(viewModel);
         mTodos.remove(viewModel);
-        resetState();
-        triggerSizeChange();
         notifyItemRemoved(position);
     }
 
-    private void resetState() {
-        for (TodoViewModel todoViewModel : mTodos) {
-            todoViewModel.resetState();
-        }
-    }
-
-    private void triggerSizeChange() {
-        if (mOnSizeChangeLitener != null) {
-            mOnSizeChangeLitener.onSizeChange(mTodos.size());
-        }
-    }
-
-    private TodoViewModel findTodo(int id) {
+    private TodoViewModel findTodo(String id) {
         for (TodoViewModel viewModel : mTodos) {
-            if (viewModel.getTodo().getId() == id) {
+            if (viewModel.getTodo().getId().equals(id)) {
                 return viewModel;
             }
         }
@@ -101,16 +75,14 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void editTodo(TodoViewModel viewModel) {
-        if (mItemClickListener != null) {
-            mItemClickListener.onItemClick(viewModel);
-        }
+        mListener.onItemClick(viewModel);
     }
 
     private void clickTodo(TodoViewModel viewModel) {
         viewModel.switchActionVisibility();
         for (TodoViewModel todoViewModel : mTodos) {
-            if (todoViewModel != viewModel) {
-                todoViewModel.switchEnableWhenNotChoose();
+            if (viewModel != todoViewModel) {
+                todoViewModel.resetState();
             }
         }
     }
@@ -140,17 +112,17 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @BindView(R.id.pop_checkbox)
         public PopCheckBox popCheckBox;
 
-        @BindView(R.id.todo)
-        public View todoView;
+        @BindView(R.id.container)
+        public View container;
 
         @BindView(R.id.edit_button)
         public View editButton;
 
+        @BindView(R.id.todo)
+        public View todoView;
+
         @BindView(R.id.delete_button)
         public View deleteButton;
-
-        @BindView(R.id.disable_layer)
-        public View disableLayer;
 
         public ViewHolder(ItemTodoBinding binding) {
             super(binding.getRoot());
@@ -161,19 +133,10 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void bind(TodoViewModel viewModel) {
             binding.setViewModel(viewModel);
             binding.executePendingBindings();
-            todoView.setOnClickListener(view -> clickTodo(viewModel));
+            container.setOnClickListener(view -> clickTodo(viewModel));
             editButton.setOnClickListener(view -> editTodo(viewModel));
-            deleteButton.setOnClickListener(view -> removeTodo(viewModel));
-            popCheckBox.setOnClickListener(view -> animateCheckChange(viewModel));
-            disableLayer.setOnClickListener(view -> resetState());
-        }
-
-        public void animateCheckChange(TodoViewModel viewModel) {
-            boolean test = !viewModel.isCompleted();
-            viewModel.getTodo().setCompleted(test);
-            popCheckBox.animateChecked(test);
-            AnimationUtils.animateAlpha(todoView,
-                    viewModel.getOpacity(), ALPHA_ANIM_DURATION);
+            deleteButton.setOnClickListener(view -> mListener.onItemRemove(viewModel));
+            popCheckBox.setOnClickListener(view -> mListener.onItemComplete(viewModel));
         }
     }
 }

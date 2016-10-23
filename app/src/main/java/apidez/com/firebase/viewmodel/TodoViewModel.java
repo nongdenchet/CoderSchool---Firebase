@@ -1,7 +1,6 @@
 package apidez.com.firebase.viewmodel;
 
 import android.databinding.BaseObservable;
-import android.databinding.ObservableBoolean;
 import android.databinding.ObservableInt;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -15,10 +14,8 @@ import apidez.com.firebase.model.Todo;
 public class TodoViewModel extends BaseObservable {
     private final String NO_DUE_DATE = "No due date";
     private Todo mTodo;
-    public ObservableBoolean enableState = new ObservableBoolean(true);
     public ObservableInt actionVisibility = new ObservableInt(View.GONE);
     public ObservableInt dividerVisibility = new ObservableInt(View.VISIBLE);
-    public ObservableInt disableVisibility = new ObservableInt(View.INVISIBLE);
 
     public TodoViewModel(Todo todo) {
         this.mTodo = todo;
@@ -33,14 +30,8 @@ public class TodoViewModel extends BaseObservable {
     }
 
     public void resetState() {
-        enableState.set(true);
         actionVisibility.set(View.GONE);
         dividerVisibility.set(View.VISIBLE);
-        disableVisibility.set(View.INVISIBLE);
-    }
-
-    private boolean isDisableLayerVisible() {
-        return disableVisibility.get() == View.VISIBLE;
     }
 
     private boolean isActionVisible() {
@@ -49,11 +40,6 @@ public class TodoViewModel extends BaseObservable {
 
     private boolean isDividerVisible() {
         return dividerVisibility.get() == View.VISIBLE;
-    }
-
-    public void switchEnableWhenNotChoose() {
-        disableVisibility.set(isDisableLayerVisible() ? View.INVISIBLE : View.VISIBLE);
-        enableState.set(!enableState.get());
     }
 
     public void switchActionVisibility() {
