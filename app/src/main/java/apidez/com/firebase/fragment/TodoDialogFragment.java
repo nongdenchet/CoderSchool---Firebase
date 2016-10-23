@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -188,7 +187,8 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     private void create() {
         mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
                 .push()
-                .setValue(gatherData(), (databaseError, databaseReference) ->
+                .setValue(gatherData(), (databaseError, databaseReference) -> {
+                    if (databaseError == null) {
                         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -201,7 +201,9 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
                             }
-                        }));
+                        });
+                    }
+                });
     }
 
     private void update() {
@@ -210,18 +212,12 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
         updates.put(id, gatherData());
         mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
                 .updateChildren(updates, (databaseError, databaseReference) -> {
-                    if (databaseError != null) {
-                        showMessage(databaseError.getMessage());
-                    } else {
+                    if (databaseError == null) {
                         mTodo = gatherData();
                         mTodo.setId(id);
                         mCallbackSuccess.onUpdateSuccess(mTodo);
                         dismiss();
                     }
                 });
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

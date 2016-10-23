@@ -13,7 +13,6 @@ import apidez.com.firebase.R;
 import apidez.com.firebase.custom.PopCheckBox;
 import apidez.com.firebase.databinding.ItemTodoBinding;
 import apidez.com.firebase.model.Todo;
-import apidez.com.firebase.utils.view.AnimationUtils;
 import apidez.com.firebase.viewmodel.TodoViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,8 +44,8 @@ public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void addTodo(Todo todo) {
-        mTodos.add(0, new TodoViewModel(todo));
-        notifyItemInserted(0);
+        mTodos.add(new TodoViewModel(todo));
+        notifyItemInserted(mTodos.size() - 1);
     }
 
     public void updateTodo(Todo todo) {

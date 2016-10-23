@@ -26,7 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import apidez.com.firebase.R;
 import apidez.com.firebase.activity.LoginActivity;
@@ -100,35 +102,60 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
 
             @Override
             public void onItemComplete(TodoViewModel viewModel) {
-
+                completeTodo(viewModel);
             }
 
             @Override
             public void onItemRemove(TodoViewModel viewModel) {
-
+                removeTodo(viewModel);
             }
         });
         mTodoList.setAdapter(mTodoListAdapter);
+    }
+
+    private void removeTodo(TodoViewModel viewModel) {
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .child(viewModel.getTodo().getId())
+                .removeValue((databaseError, databaseReference) -> {
+                    if (databaseError == null) {
+                        mTodoListAdapter.removeTodo(viewModel);
+                    }
+                });
+    }
+
+    private void completeTodo(TodoViewModel viewModel) {
+        Todo todo = viewModel.getTodo();
+        todo.setCompleted(!todo.isCompleted());
+        Map<String, Object> updates = new HashMap<>();
+        updates.put(todo.getId(), todo);
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .child(viewModel.getTodo().getId())
+                .updateChildren(updates, (databaseError, databaseReference) -> {
+                    if (databaseError == null) {
+                        mTodoListAdapter.updateTodo(todo);
+                    }
+                });
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mProgressDialog.show();
+        mProgressDialog.setCancelable(false);
         Query query = mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
                 .orderByChild("uid")
                 .startAt(mFirebaseUser.getUid())
                 .endAt(mFirebaseUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        handleResponse(dataSnapshot);
-                    }
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                handleResponse(dataSnapshot);
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     private void handleResponse(DataSnapshot dataSnapshot) {
@@ -137,7 +164,6 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
             Todo todo = child.getValue(Todo.class);
             todo.setId(child.getKey());
             todos.add(todo);
-            Collections.reverse(todos);
             mTodoListAdapter.setTodos(todos);
         }
         mProgressDialog.hide();
