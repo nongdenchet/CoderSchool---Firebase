@@ -8,8 +8,9 @@ import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import apidez.com.firebase.R;
-import apidez.com.firebase.utils.StringUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -20,6 +21,7 @@ import butterknife.OnClick;
 
 public class RegisterActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
+    private FirebaseAuth mFirebaseAuth;
 
     @BindView(R.id.edtEmail)
     TextView edtEmail;
@@ -46,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void setUpFirebase() {
         // TODO: implement this
+        mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
     @OnClick(R.id.btnLogin)
@@ -58,8 +61,8 @@ public class RegisterActivity extends AppCompatActivity {
         String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
         String confirmation = edtConfirmation.getText().toString().trim();
-        if (!StringUtils.isValidEmailAddress(email)) {
-            showError("Invalid email");
+        if (!TextUtils.isEmpty(email)) {
+            showError("Email is empty");
         } else if (password.length() < 8) {
             showError("Password is too short");
         } else if (!TextUtils.equals(password, confirmation)) {
@@ -72,6 +75,10 @@ public class RegisterActivity extends AppCompatActivity {
     private void registerWithFirebase(String email, String password) {
         mProgressDialog.show();
         // TODO: implement this
+        mFirebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> startActivity(TodoActivity.getIntent(this)))
+                .addOnFailureListener(e -> showError(e.getMessage()))
+                .addOnCompleteListener(task -> mProgressDialog.hide());
     }
 
     private void showError(String error) {

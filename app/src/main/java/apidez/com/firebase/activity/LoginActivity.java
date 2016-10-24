@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import apidez.com.firebase.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,6 +18,7 @@ import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
+    private FirebaseAuth mFirebaseAuth;
 
     @BindView(R.id.edtEmail)
     EditText edtEmail;
@@ -39,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setUpFirebase() {
         // TODO: implement this
+        mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
     @OnClick(R.id.btnRegister)
@@ -58,6 +62,10 @@ public class LoginActivity extends AppCompatActivity {
         }
         mProgressDialog.show();
         // TODO: implement login
+        mFirebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> mProgressDialog.hide())
+                .addOnFailureListener(e -> showError(e.getMessage()))
+                .addOnSuccessListener(authResult -> startActivity(TodoActivity.getIntent(this)));
     }
 
     private void showError(String error) {
