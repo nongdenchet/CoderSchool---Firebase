@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import apidez.com.firebase.R;
 import apidez.com.firebase.activity.LoginActivity;
@@ -200,6 +202,17 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     }
 
     private void update() {
-        // TODO: implement this
+        Todo todo = gatherData();
+        String id = mTodo.getId();
+        Map<String, Object> updates = new HashMap<>();
+        updates.put(id, todo);
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .updateChildren(updates, (databaseError, databaseReference) -> {
+                    if (databaseError == null) {
+                        todo.setId(id);
+                        mCallbackSuccess.onUpdateSuccess(todo);
+                        dismiss();
+                    }
+                });
     }
 }

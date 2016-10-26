@@ -24,7 +24,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import apidez.com.firebase.R;
 import apidez.com.firebase.activity.LoginActivity;
@@ -112,11 +115,28 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
     }
 
     private void removeTodo(TodoViewModel viewModel) {
-        // TODO: implement this
+        Todo todo = viewModel.getTodo();
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .child(todo.getId())
+                .removeValue((databaseError, databaseReference) -> {
+                    if (databaseError == null) {
+                        mTodoListAdapter.removeTodo(viewModel);
+                    }
+                });
     }
 
     private void completeTodo(TodoViewModel viewModel) {
-        // TODO: implement this
+        Todo todo = viewModel.getTodo();
+        String id = todo.getId();
+        todo.setCompleted(!todo.isCompleted());
+        Map<String, Object> updates = new HashMap<>();
+        updates.put(id, todo);
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .updateChildren(updates, (databaseError, databaseReference) -> {
+                    if (databaseError == null) {
+                        mTodoListAdapter.updateTodo(todo);
+                    }
+                });
     }
 
     @Override
@@ -126,12 +146,11 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
     }
 
     private void fetchTodos() {
-        // TODO: implement this
         mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
                 .orderByChild("uid")
                 .startAt(mFirebaseUser.getUid())
                 .endAt(mFirebaseUser.getUid())
-                .addValueEventListener(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         List<Todo> todos = new ArrayList<>();
@@ -140,6 +159,7 @@ public class TodoListFragment extends Fragment implements TodoDialogFragment.Cal
                             todo.setId(child.getKey());
                             todos.add(todo);
                         }
+                        Collections.reverse(todos);
                         mTodoListAdapter.setTodos(todos);
                         mProgressDialog.hide();
                     }
