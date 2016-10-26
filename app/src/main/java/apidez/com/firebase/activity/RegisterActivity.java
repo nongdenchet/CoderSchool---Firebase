@@ -47,7 +47,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setUpFirebase() {
-        // TODO: implement this
         mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
@@ -74,7 +73,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registerWithFirebase(String email, String password) {
         mProgressDialog.show();
-        // TODO: implement this
         mFirebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> startActivity(TodoActivity.getIntent(this)))
                 .addOnFailureListener(e -> showError(e.getMessage()))
@@ -83,9 +81,5 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void showError(String error) {
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
-    }
-
-    private void handleRegisterSuccess() {
-        startActivity(TodoActivity.getIntent(this));
     }
 }

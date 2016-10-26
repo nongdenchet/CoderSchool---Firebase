@@ -41,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setUpFirebase() {
-        // TODO: implement this
         mFirebaseAuth = FirebaseAuth.getInstance();
     }
 
@@ -61,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         mProgressDialog.show();
-        // TODO: implement login
         mFirebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> mProgressDialog.hide())
                 .addOnFailureListener(e -> showError(e.getMessage()))
@@ -70,10 +68,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showError(String error) {
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
-    }
-
-    private void handleLoginSuccess() {
-        startActivity(TodoActivity.getIntent(this));
     }
 
     public static Intent getIntent(Context context) {
