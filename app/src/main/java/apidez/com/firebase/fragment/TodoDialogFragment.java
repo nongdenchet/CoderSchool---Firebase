@@ -14,11 +14,20 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
 
 import apidez.com.firebase.R;
+import apidez.com.firebase.activity.LoginActivity;
+import apidez.com.firebase.config.FirebaseConfig;
 import apidez.com.firebase.custom.DueDatePicker;
 import apidez.com.firebase.custom.PriorityPicker;
 import apidez.com.firebase.model.Todo;
@@ -35,6 +44,9 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     private boolean isRestore = false;
     private Todo mTodo;
     private CallbackSuccess mCallbackSuccess;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private DatabaseReference mDatabaseReference;
 
     @BindView(R.id.discard)
     TextView discardButton;
@@ -55,6 +67,17 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
 
     public void setCallbackSuccess(CallbackSuccess callbackSuccess) {
         this.mCallbackSuccess = callbackSuccess;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if (mFirebaseUser == null) {
+            startActivity(LoginActivity.getIntent(getActivity()));
+        }
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     public static TodoDialogFragment newInstance() {
@@ -145,11 +168,35 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
     }
 
     private Todo gatherData() {
-        // TODO: implement this
-        return null;
+        return new Todo(
+                priorityPicker.getPriority(),
+                titleEditText.getText().toString(),
+                dueDatePicker.getDate(),
+                mFirebaseUser.getUid());
     }
 
     private void create() {
+        Todo todo = gatherData();
+        mDatabaseReference.child(FirebaseConfig.TODOS_CHILD)
+                .push()
+                .setValue(todo, (databaseError, databaseReference) -> {
+                    if (databaseError == null) {
+                        databaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Todo newTodo = dataSnapshot.getValue(Todo.class);
+                                newTodo.setId(dataSnapshot.getKey());
+                                mCallbackSuccess.onCreateSuccess(newTodo);
+                                dismiss();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
         // TODO: implement this
     }
 
