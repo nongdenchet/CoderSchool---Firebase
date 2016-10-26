@@ -197,7 +197,6 @@ public class TodoDialogFragment extends DialogFragment implements DueDatePicker.
                         });
                     }
                 });
-        // TODO: implement this
     }
 
     private void update() {
