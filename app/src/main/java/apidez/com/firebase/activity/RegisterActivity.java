@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
         String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
         String confirmation = edtConfirmation.getText().toString().trim();
-        if (!TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(email)) {
             showError("Email is empty");
         } else if (password.length() < 8) {
             showError("Password is too short");
